@@ -1,0 +1,78 @@
+{
+    "version": "1",
+    "returns": {
+        "status": "$.status|0",
+        "data": "$.response|0"
+    },
+    "start": "block.1",
+    "nodes": {
+        "block.1": {
+            "type": "Codeblock",
+            "config": {
+                "method": "Greet"
+            },
+            "parameters": [{
+                    "name": "username",
+                    "value": "$.params.username|0",
+                    "default": "Mr. Nobody"
+                }
+            ],
+            "response": {
+                "context": {
+                    "$|0": "greeting"
+                },
+                "routes": [
+                    {
+                        "conditions": [{
+                            "key": "$.error|0",
+                            "exists": true
+                        }],
+                        "next": "response.error"
+                    }, {
+                        "next": "response.success"
+                    }
+                ]
+            }
+        },
+        "response.success": {
+            "type": "parametermap",
+            "config": {},
+            "parameters": [
+                {
+                    "name": "data",
+                    "value": "$.greeting|0"
+                }, {
+                    "name": "status",
+                    "default": 200
+                }
+            ],
+            "response": {
+                "context": {
+                    "$.data|0": "response",
+                    "$.status|0": "status"
+                },
+                "routes": [{
+                    "next": null
+                }]
+            }
+        },
+        "response.error": {
+            "type": "parametermap",
+            "config": {},
+            "parameters": [
+                {
+                    "name": "status",
+                    "default": 400
+                }
+            ],
+            "response": {
+                "context": {
+                    "$.status|0": "status"
+                },
+                "routes": [{
+                    "next": null
+                }]
+            }
+        }
+    }
+}
